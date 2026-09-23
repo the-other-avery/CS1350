@@ -176,10 +176,11 @@ print(f"List lookup: {list_time*1e6:.2f} µs")
 print(f"Set lookup:  {set_time*1e6:.2f} µs")
 print(f"Set is ~{list_time/set_time:.0f}x faster")
 
-fs = frozenset([1, 2, 3])
+game_results = {
+    frozenset(["Alice", "Bob"]): "Alice won",
+    frozenset(["Carol", "Dave"]): "Draw",
+}
 
-d = {fs: "my value"}
+print(game_results[frozenset(["Bob", "Alice"])])
 
-print(d[fs])
-print(d[frozenset([1, 2, 3])])
-
+edges = [(1, 2), (2, 3), (1, 3), (3, 4)]
