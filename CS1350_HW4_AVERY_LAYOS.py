@@ -184,3 +184,96 @@ game_results = {
 print(game_results[frozenset(["Bob", "Alice"])])
 
 edges = [(1, 2), (2, 3), (1, 3), (3, 4)]
+
+nodes = {node for edge in edges for node in edge}
+print(nodes)
+
+a = {1, 2, 3, 4}
+b = {3, 4, 5, 6}
+
+unique_numbers = a | b
+print(unique_numbers)
+
+numberSets = a & b
+print(numberSets)
+
+only_in_a = a - b
+print(only_in_a)
+
+morning_shift = {"Alice", "Bob", "Carol"}
+evening_shift = {"Carol", "Dave", "Eve"}
+weekend_shift = {"Alice", "Eve", "Frank"}
+
+all_shifts = morning_shift & evening_shift & weekend_shift
+print(all_shifts) #empty because no one works all shifts
+
+at_least_one_shift = morning_shift | evening_shift | weekend_shift
+print(at_least_one_shift)
+
+only_morning = morning_shift - evening_shift - weekend_shift
+print(only_morning)
+
+exactly_one = (
+    (morning_shift - evening_shift - weekend_shift) |
+    (evening_shift - morning_shift - weekend_shift) |
+    (weekend_shift - morning_shift - evening_shift)
+)
+print(exactly_one)
+
+prereqs_met = {"Alice", "Bob", "Carol", "Dave"}
+has_space = {"Bob", "Carol", "Eve", "Frank"}
+paid_tuition = {"Alice", "Carol", "Eve"}
+
+all_Met = prereqs_met & has_space & paid_tuition
+print(all_Met, "has all three of these met to enroll.")
+
+noTuition = prereqs_met - paid_tuition
+print(noTuition, "have pre reqs met but have not paid tuition.")
+
+prereqORtuition = prereqs_met or paid_tuition
+print(prereqORtuition)
+
+
+
+
+numbers = {1, 2, 3}
+print(numbers)
+
+numbers.add(4)
+print(numbers)
+
+numbers.remove(1)
+print(numbers)
+
+evens = {x for x in range(21) if x % 2 == 0}
+print(evens)
+
+s = {2, 4, 6}
+s.discard(99) # no error only discards if item is in set
+print(s)
+# s.remove(99)  # KeyError: 99
+
+intermediate_s = [4, 5, 2, 4, 8, 5, 2, 1, 9, 4]
+print(intermediate_s)
+result = list(dict.fromkeys(intermediate_s))
+print(result)
+
+sentence = "To be or not to be that is the question"
+unique_words = {word.lower() for word in sentence.split()}
+print(unique_words)
+
+expected = set(range(1, 11))
+actual = {1, 2, 4, 5, 7, 8, 10}
+
+missing = expected - actual
+print(sorted(missing))
+
+def find_duplicates(lst):
+    seen = set()
+    duplicates = set()
+    for item in lst:
+        if item in seen:
+            duplicates.add(item)
+        else:
+            seen.add(item)
+    return duplicates
