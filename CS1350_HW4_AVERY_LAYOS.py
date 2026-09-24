@@ -260,7 +260,7 @@ print(result)
 
 sentence = "To be or not to be that is the question"
 unique_words = {word.lower() for word in sentence.split()}
-print(unique_words)
+print(*unique_words)
 
 expected = set(range(1, 11))
 actual = {1, 2, 4, 5, 7, 8, 10}
@@ -277,3 +277,21 @@ def find_duplicates(lst):
         else:
             seen.add(item)
     return duplicates
+
+alice = {"Python", "SQL", "Excel", "Tableau"}
+bob = {"Python", "Java", "SQL", "AWS"}
+carol = {"Python", "R", "SQL", "Tableau"}
+
+allSkills = alice & bob & carol
+print("alice, bob and carol all have skills in:", allSkills)
+
+onlyAlice = alice - bob - carol
+print(onlyAlice)
+
+uniqueSkills = alice | bob | carol
+print(uniqueSkills)
+
+def common_chars(s1, s2):
+    return set(s1) & set(s2)
+
+print(common_chars("hello", "world"))
