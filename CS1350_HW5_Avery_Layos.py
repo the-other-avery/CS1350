@@ -20,16 +20,6 @@ class Workout:
     def __str__(self):
         return f"{self.name} - {self.duration_minutes}min on {self.date} ({self.calories_burned()} cal)"
 
-
-if __name__ == "__main__":
-    w = Workout("Benchpress", 45, "2026-02-23")
-    print(w)
-
-    try:
-        w.duration_minutes = 0
-    except ValueError as e:
-        print(e)
-
 class CardioWorkout(Workout):
     def __init__(self, name, duration_minutes, date, avg_heart_rate):
         super().__init__(name, duration_minutes, date)
@@ -61,3 +51,12 @@ class StrengthWorkout(Workout):
     @property
     def total_volume(self):
         return self.sets * self.reps_per_set * self.weight_lbs
+
+if __name__ == "__main__":
+    w = Workout("Benchpress", 45, "2026-02-23")
+    print(w)
+
+    try:
+        w.duration_minutes = 0
+    except ValueError as e:
+        print(e)
