@@ -1,8 +1,9 @@
 class Workout:
     def __init__(self, name, duration_minutes, date):
         self.name = name
+        self._duration_minutes = 0
+        self.duration_minutes = duration_minutes  # Use setter
         self.date = date
-        self.duration_minutes = duration_minutes
 
     @property
     def duration_minutes(self):
@@ -10,15 +11,17 @@ class Workout:
 
     @duration_minutes.setter
     def duration_minutes(self, value):
-        if value <= 0:
-            raise ValueError("Duration must be greater than 0")
-        self._duration_minutes = value
+        if value > 0:
+            self._duration_minutes = value
+        else:
+            print("Error: duration must be greater than 0")
 
     def calories_burned(self):
         return 0
 
     def __str__(self):
-        return f"{self.name} - {self.duration_minutes}min on {self.date} ({self.calories_burned()} cal)"
+        return f"{self.name} - {self.duration_minutes}min on {self.date} ({self.calories_burned():.0f} cal)"
+
 
 class CardioWorkout(Workout):
     def __init__(self, name, duration_minutes, date, avg_heart_rate):
@@ -52,11 +55,44 @@ class StrengthWorkout(Workout):
     def total_volume(self):
         return self.sets * self.reps_per_set * self.weight_lbs
 
-if __name__ == "__main__":
-    w = Workout("Benchpress", 45, "2026-02-23")
-    print(w)
 
-    try:
-        w.duration_minutes = 0
-    except ValueError as e:
-        print(e)
+class WeeklyLog:
+    def __init__(self, week_label):
+        self.week_label = week_label
+        self._workouts = []
+
+    def add_workout(self, workout):
+        self._workouts.append(workout)
+
+    @property
+    def total_minutes(self):
+        return sum(w.duration_minutes for w in self._workouts)
+
+    @property
+    def total_calories(self):
+        return sum(w.calories_burned() for w in self._workouts)
+
+    def summary(self):
+        print(f"--- {self.week_label} ---")
+        for w in self._workouts:
+            print(w)
+        print(f"Totals: {self.total_minutes} min, {int(self.total_calories)} cal")
+
+    def hardest_workout(self):
+        if not self._workouts:
+            return None
+        return max(self._workouts, key=lambda w: w.calories_burned())
+
+if __name__ == "__main__":
+    log = WeeklyLog("Week 7")
+    run = CardioWorkout("Morning Run", 30, "2026-02-23", 155)
+    lift = StrengthWorkout("Bench Press", 45, "2026-02-24", 4, 10, 135)
+    bike = CardioWorkout("Cycling", 60, "2026-02-25", 130)
+    log.add_workout(run)
+    log.add_workout(lift)
+    log.add_workout(bike)
+    log.summary()
+    print(f"\nRun intensity: {run.intensity}")
+    print(f"Bench press volume: {lift.total_volume} lbs")
+    hardest = log.hardest_workout()
+    print(f"Hardest workout: {hardest.name} ({hardest.calories_burned():.0f} cal)")
