@@ -29,3 +29,35 @@ if __name__ == "__main__":
         w.duration_minutes = 0
     except ValueError as e:
         print(e)
+
+class CardioWorkout(Workout):
+    def __init__(self, name, duration_minutes, date, avg_heart_rate):
+        super().__init__(name, duration_minutes, date)
+        self.avg_heart_rate = avg_heart_rate
+
+    def calories_burned(self):
+        return self.duration_minutes * (self.avg_heart_rate / 100) * 5
+
+    @property
+    def intensity(self):
+        if self.avg_heart_rate >= 150:
+            return "High"
+        elif self.avg_heart_rate >= 120:
+            return "Moderate"
+        else:
+            return "Low"
+
+
+class StrengthWorkout(Workout):
+    def __init__(self, name, duration_minutes, date, sets, reps_per_set, weight_lbs):
+        super().__init__(name, duration_minutes, date)
+        self.sets = sets
+        self.reps_per_set = reps_per_set
+        self.weight_lbs = weight_lbs
+
+    def calories_burned(self):
+        return self.sets * self.reps_per_set * (self.weight_lbs / 100) * 3
+
+    @property
+    def total_volume(self):
+        return self.sets * self.reps_per_set * self.weight_lbs
