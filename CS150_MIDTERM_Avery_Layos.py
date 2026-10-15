@@ -229,8 +229,47 @@ except ValueError as e:
 
 
 class Polynomial:
-    # YOUR CODE HERE
-    pass
+    def __init__(self, coeffs):
+        self.coeffs = list(coeffs)
+
+    def _degree(self):
+        return max((i for i, c in enumerate(self.coeffs) if c != 0), default=-1)
+
+    def __str__(self):
+        terms = []
+        for i, c in reversed(list(enumerate(self.coeffs))):
+            if c == 0:
+                continue
+            if i == 0:
+                terms.append(str(c))
+            else:
+                terms.append(("" if c == 1 else str(c)) + ("x" if i == 1 else f"x^{i}"))
+        return " + ".join(terms)
+
+    def __repr__(self):
+        return f"Polynomial({self.coeffs})"
+
+    def __len__(self):
+        return len(self.coeffs)
+
+    def __getitem__(self, i):
+        return self.coeffs[i] if i < len(self.coeffs) else 0
+
+    def __call__(self, x):
+        return sum(c * x**i for i, c in enumerate(self.coeffs))
+
+    def __add__(self, other):
+        n = max(len(self), len(other))
+        return Polynomial([self[i] + other[i] for i in range(n)])
+
+    def __mul__(self, k):
+        return Polynomial([c * k for c in self.coeffs])
+
+    def __eq__(self, other):
+        return self._degree() == other._degree()
+
+    def __lt__(self, other):
+        return self._degree() < other._degree()
 
 # Test cases
 p = Polynomial([1, 2, 3]) # 1 + 2x + 3x^2
