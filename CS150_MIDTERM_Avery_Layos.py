@@ -53,7 +53,62 @@ print(gb.missing("hw2"))            # ['Carol']
 
 
 from abc import ABC, abstractmethod
-# YOUR CODE HERE
+
+
+class Shipment(ABC):
+    def __init__(self, tracking_id, weight_kg):
+        Shipment.validate_weight(weight_kg)
+        self.tracking_id = tracking_id
+        self.weight_kg = weight_kg
+
+    @abstractmethod
+    def cost(self):
+        pass
+
+    def label(self):
+        return f"{self.tracking_id} ({self.weight_kg} kg): ${self.cost():.2f}"
+
+    @staticmethod
+    def validate_weight(weight_kg):
+        if weight_kg <= 0:
+            raise ValueError("Weight must be positive")
+
+
+class StandardShipment(Shipment):
+    def __init__(self, tracking_id, weight_kg, rate_per_kg=2.00):
+        super().__init__(tracking_id, weight_kg)
+        self.rate_per_kg = rate_per_kg
+
+    def cost(self):
+        return self.weight_kg * self.rate_per_kg
+
+
+class ExpressShipment(StandardShipment):
+    def __init__(self, tracking_id, weight_kg, rate_per_kg=2.00, surcharge=10.00):
+        super().__init__(tracking_id, weight_kg, rate_per_kg)
+        self.surcharge = surcharge
+
+    def cost(self):
+        return super().cost() + self.surcharge
+
+
+class InternationalShipment(Shipment):
+    def __init__(self, tracking_id, weight_kg, country, customs_pct=0.15):
+        super().__init__(tracking_id, weight_kg)
+        self.country = country
+        self.customs_pct = customs_pct
+
+    def cost(self):
+        return self.weight_kg * 5.00 * (1 + self.customs_pct)
+
+
+def manifest(shipments):
+    for s in shipments:
+        print(s.label())
+    total = sum(s.cost() for s in shipments)
+    print(f"Total: ${total:.2f}")
+    return total
+
 # Test cases
 shipments = [
     StandardShipment("S100", 4.0),
@@ -67,6 +122,6 @@ total = manifest(shipments)
 # Total: $40.25
 try:
     Shipment.validate_weight(-1)
-    except ValueError as e:
+except ValueError as e:
     print("Caught:", e)
     # Caught: Weight must be positive
