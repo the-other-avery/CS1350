@@ -48,3 +48,25 @@ print(gb.assignment_average("hw1")) # 86.66666666666667
 print(gb.assignment_average("hw9")) # None
 print(gb.top_students(2))           # ['Carol', 'Alice']
 print(gb.missing("hw2"))            # ['Carol']
+
+
+
+
+from abc import ABC, abstractmethod
+# YOUR CODE HERE
+# Test cases
+shipments = [
+    StandardShipment("S100", 4.0),
+    ExpressShipment("E200", 2.5),
+    InternationalShipment("I300", 3.0, country="Canada")
+]
+total = manifest(shipments)
+# S100 (4.0 kg): $8.00
+# E200 (2.5 kg): $15.00
+# I300 (3.0 kg): $17.25
+# Total: $40.25
+try:
+    Shipment.validate_weight(-1)
+    except ValueError as e:
+    print("Caught:", e)
+    # Caught: Weight must be positive
