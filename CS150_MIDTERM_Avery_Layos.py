@@ -52,6 +52,70 @@ print(gb.missing("hw2"))            # ['Carol']
 
 
 
+class Door:
+    def __init__(self, name):
+        self.name = name
+        self.cards = set()
+
+    def grant(self, card_id):
+        self.cards.add(card_id)
+
+    def revoke(self, card_id):
+        self.cards.discard(card_id)  # discard: no error if absent
+
+    def can_open(self, card_id):
+        return card_id in self.cards
+
+
+def master_cards(doors):
+    if not doors:
+        return set()
+    return set.intersection(*(d.cards for d in doors))
+
+
+def single_door_cards(doors):
+    counts = {}
+    for d in doors:
+        for c in d.cards:
+            counts[c] = counts.get(c, 0) + 1
+    return {c for c, n in counts.items() if n == 1}
+
+
+def unused_cards(all_cards, doors):
+    return set(all_cards) - set().union(*(d.cards for d in doors))
+
+
+def audit(doors):
+    for d in doors:
+        print(f"{d.name}: {len(d.cards)} cards")
+    print(f"Master cards: {master_cards(doors)}")
+
+# Test cases
+lobby = Door("Lobby")
+for c in [101, 102, 103, 104]:
+    lobby.grant(c)
+    lab = Door("Lab")
+for c in [101, 103, 105]:
+    lab.grant(c)
+    server = Door("Server Room")
+for c in [101, 105]:
+    server.grant(c)
+    lab.revoke(105)
+    lab.revoke(999) # no error
+    print(lab.can_open(103), lab.can_open(105)) # True False
+    doors = [lobby, lab, server]
+    print(master_cards(doors)) # {101}
+    print(single_door_cards(doors)) # {102, 104}
+    print(unused_cards({101, 102, 105, 200}, doors)) # {200}
+    audit(doors)
+# Lobby: 4 cards
+# Lab: 2 cards
+# Server Room: 2 cards
+# Master cards: {101}
+
+
+
+
 from abc import ABC, abstractmethod
 
 
