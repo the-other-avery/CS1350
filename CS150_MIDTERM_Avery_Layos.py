@@ -116,6 +116,41 @@ for c in [101, 105]:
 
 
 
+import json
+
+def process_readings(in_file, json_file, alert_file, limit):
+    readings = {}  # sensor_id: list of values
+    alerts = 0
+
+    with open(in_file) as f, open(alert_file, "w") as out:
+        for line in f:
+            line = line.strip()
+            if not line:
+                continue
+            timestamp, sensor, raw = line.split(",")
+            value = float(raw)
+            readings.setdefault(sensor, []).append(value)
+            if value > limit:
+                out.write(f"{timestamp} {sensor} {raw}\n")
+                alerts += 1
+
+    summary = {
+        sensor: {
+            "count": len(values),
+            "average": sum(values) / len(values),
+            "max": max(values),
+        }
+        for sensor, values in readings.items()
+    }
+
+    with open(json_file, "w") as f:
+        json.dump(summary, f, indent=2)
+
+    return alerts
+
+
+
+
 from abc import ABC, abstractmethod
 
 
@@ -189,3 +224,26 @@ try:
 except ValueError as e:
     print("Caught:", e)
     # Caught: Weight must be positive
+
+
+
+
+class Polynomial:
+    # YOUR CODE HERE
+    pass
+
+# Test cases
+p = Polynomial([1, 2, 3]) # 1 + 2x + 3x^2
+q = Polynomial([0, 1]) # x
+print(p) # 3x^2 + 2x + 1
+print(q) # x
+print(repr(p)) # Polynomial([1, 2, 3])
+print(len(p)) # 3
+print(p[2], p[7]) # 3 0
+print(p(2)) # 17
+print(q(5)) # 5
+r = p + q
+print(r) # 3x^2 + 3x + 1
+print(p * 2) # 6x^2 + 4x + 2
+print(p == Polynomial([5, 0, 1])) # True (both degree 2)
+print(q < p) # True (degree 1 < degree 2)
