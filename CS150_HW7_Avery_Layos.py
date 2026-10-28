@@ -71,3 +71,82 @@ def print_report(counts, error_file="error.log"):
     with open(error_file, "r") as f:
         for line in f:
             print("  " + line.rstrip("\n"))
+
+
+
+
+import json
+import pickle
+import os
+
+
+def load_incidents(csv_file):
+    """Return a list of incident dicts read from the CSV file."""
+    incidents = []
+
+    with open(csv_file, "r") as f:
+        next(f, None)  # skip the header line
+        for line in f:
+            line = line.strip()
+            if not line:
+                continue  # ignore blank lines
+            id_, machine, severity, description = line.split(",")
+            incidents.append({
+                "id": int(id_),
+                "machine": machine,
+                "severity": severity,
+                "description": description,
+            })
+
+    return incidents
+
+
+def save_summary(incidents, json_file):
+    """Save a summary to a JSON file and return the summary dict."""
+    summary = {
+        "total": len(incidents),
+        "by_machine": {},
+        "by_severity": {},
+        "high_ids": [],
+    }
+
+    for incident in incidents:
+        machine = incident["machine"]
+        severity = incident["severity"]
+
+        summary["by_machine"][machine] = summary["by_machine"].get(machine, 0) + 1
+        summary["by_severity"][severity] = summary["by_severity"].get(severity, 0) + 1
+
+        if severity == "high":
+            summary["high_ids"].append(incident["id"])
+
+    with open(json_file, "w") as f:
+        json.dump(summary, f, indent=2)
+
+    return summary
+
+
+def archive(incidents, folder):
+    """Pickle all incidents and write one JSON file per machine into folder."""
+    os.makedirs(folder, exist_ok=True)
+
+    # Whole list, pickled in binary mode
+    with open(os.path.join(folder, "incidents.pkl"), "wb") as f:
+        pickle.dump(incidents, f)
+
+    # Group incidents by machine, keeping file order
+    by_machine = {}
+    for incident in incidents:
+        by_machine.setdefault(incident["machine"], []).append(incident)
+
+    for machine, items in by_machine.items():
+        with open(os.path.join(folder, machine + ".json"), "w") as f:
+            json.dump(items, f)
+
+    return sorted(os.listdir(folder))
+
+
+def load_archive(folder):
+    """Return the incident list stored in folder/incidents.pkl."""
+    with open(os.path.join(folder, "incidents.pkl"), "rb") as f:
+        return pickle.load(f)
